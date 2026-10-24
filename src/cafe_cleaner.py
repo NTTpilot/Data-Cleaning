@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 cafe_cleaner.py - reusable, vectorized cleaning pipeline for the dirty cafe sales data.
 
@@ -50,7 +49,7 @@ class Config:
     unknown_label: str = "Unknown"
     price_purity: float = 0.95      # min share of rows agreeing on an item's price
     iqr_k: float = 3.0              # fence multiplier for per-item IQR outlier flag
-    drop_rule_violations: bool = True    # qty*price != total, non-positive values
+    drop_rule_violations: bool = True    # quantity*price != total, non-positive values
     drop_iqr_outliers: bool = False      # flag only by default (see README note below)
     scaling: str = "standard"            # "standard" (z-score) or "minmax"
 
@@ -116,7 +115,7 @@ def drop_duplicates(df: pd.DataFrame, cfg: Config) -> pd.DataFrame:
 
 
 # --------------------------------------------------------------------------- #
-# 4. Imputation (relationship-based first, distribution-based as fallback)
+# 4. Imputation (relationship based first, distribution-based fallback)
 # --------------------------------------------------------------------------- #
 def learn_price_map(df: pd.DataFrame, cfg: Config) -> dict[str, float]:
     """item -> unit price, only for items whose price is (near) constant."""
@@ -137,8 +136,7 @@ def invert_unique(price_map: dict[str, float]) -> dict[float, str]:
 
 
 def impute_numeric_relational(df: pd.DataFrame, price_map: dict[str, float]) -> pd.DataFrame:
-    """Total = Quantity x Price, and Price is fixed per item.
-    Any one missing value can be recovered from the others, no guessing needed."""
+    """Total = Quantity x Price, so if any two of the three are known, the third can be inferred."""
     df = df.copy()
     before = df[["item", "quantity", "price_per_unit", "total_spent"]].notna()
     q, p, t = df["quantity"], df["price_per_unit"], df["total_spent"]
@@ -180,8 +178,8 @@ def impute_numeric_fallback(df: pd.DataFrame, stats: dict) -> pd.DataFrame:
 
 
 def impute_categorical(df: pd.DataFrame, cfg: Config) -> pd.DataFrame:
-    """Categoricals (esp. payment/location) are ~uniform with 15-30% missing, so
-    mode-filling would fabricate a majority. Keep an explicit 'Unknown' class."""
+    """Categoricals ( mainly payment/location) are ~uniform with 15-30% missing, so
+    mode-filling would fabricate a majority. Instead, we fill with 'Unknown' and flag the imputed rows."""
     df = df.copy()
     for c in cfg.categorical_cols:
         if f"{c}_imputed" not in df:
