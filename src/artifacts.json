@@ -1,0 +1,70 @@
+{
+  "price_map": {
+    "Cake": 3.0,
+    "Coffee": 2.0,
+    "Cookie": 1.0,
+    "Juice": 3.0,
+    "Salad": 5.0,
+    "Sandwich": 4.0,
+    "Smoothie": 4.0,
+    "Tea": 1.5
+  },
+  "fallback_stats": {
+    "quantity_mode": 5.0,
+    "price_median": 3.0,
+    "price_median_by_item": {
+      "Cake": 3.0,
+      "Coffee": 2.0,
+      "Cookie": 1.0,
+      "Juice": 3.0,
+      "Salad": 5.0,
+      "Sandwich": 4.0,
+      "Smoothie": 4.0,
+      "Tea": 1.5
+    }
+  },
+  "scaler": {
+    "quantity": {
+      "mean": 3.0289086726017804,
+      "std": 1.421643717891369,
+      "min": 1.0,
+      "max": 5.0
+    },
+    "price_per_unit": {
+      "mean": 2.9470341102330697,
+      "std": 1.2797506728547723,
+      "min": 1.0,
+      "max": 5.0
+    },
+    "total_spent": {
+      "mean": 8.93963188956687,
+      "std": 6.0076375803908615,
+      "min": 1.0,
+      "max": 25.0
+    }
+  },
+  "categories": {
+    "item": [
+      "Cake",
+      "Coffee",
+      "Cookie",
+      "Juice",
+      "Salad",
+      "Sandwich",
+      "Smoothie",
+      "Tea",
+      "Unknown"
+    ],
+    "payment_method": [
+      "Cash",
+      "Credit Card",
+      "Digital Wallet",
+      "Unknown"
+    ],
+    "location": [
+      "In-Store",
+      "Takeaway",
+      "Unknown"
+    ]
+  }
+}

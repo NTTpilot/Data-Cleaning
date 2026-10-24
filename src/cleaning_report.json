@@ -1,0 +1,30 @@
+{
+  "rows_in": 10000,
+  "missing_after_standardize": {
+    "transaction_id": 0,
+    "item": 969,
+    "quantity": 479,
+    "price_per_unit": 533,
+    "total_spent": 502,
+    "payment_method": 3178,
+    "location": 3961,
+    "transaction_date": 460
+  },
+  "duplicates_or_bad_id_dropped": 0,
+  "still_missing_after_relational": {
+    "quantity": 23,
+    "price_per_unit": 6,
+    "total_spent": 23
+  },
+  "rule_violations": 3,
+  "iqr_outliers_flagged": 0,
+  "rows_out": 9997,
+  "imputed_cells": {
+    "item_imputed": 966,
+    "quantity_imputed": 476,
+    "price_per_unit_imputed": 530,
+    "total_spent_imputed": 502,
+    "payment_method_imputed": 3177,
+    "location_imputed": 3960
+  }
+}
