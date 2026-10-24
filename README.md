@@ -48,6 +48,45 @@ Other options: `--scaling minmax` for min-max instead of z-score scaling, and `-
 
 **What gets overwritten.** Output names come from the input name with `dirty_` removed, so `dirty_cafe_sales.csv` writes `cleaned/cleaned_cafe_sales.csv` and `model_ready/model_ready_cafe_sales.csv`, replacing any existing files with those names. A different input name writes new files and leaves the old ones alone. `src/cleaning_report.json` is rewritten on every run.
 
+## Pipeline diagram
+
+```mermaid
+flowchart TD
+    A["Raw CSV<br/>default: uncleaned/dirty_cafe_sales.csv"] --> B["Load as text<br/>normalize column names"]
+    B --> C["Standardize missing values<br/>trim whitespace; sentinels to null"]
+    C --> D["Cast and normalize types<br/>validate IDs; parse explicit date formats;<br/>normalize categories"]
+    D --> E["Remove invalid IDs and duplicates<br/>keep most complete row per transaction"]
+    E --> F{"Artifacts available<br/>and not --refit?"}
+
+    F -- "No: FIT" --> G["Learn item-to-price map"]
+    F -- "Yes: TRANSFORM" --> H["Reuse saved price map"]
+    G --> I["Relational numeric imputation<br/>Total = Quantity × Price"]
+    H --> I
+    I --> J{"FIT or TRANSFORM?"}
+    J -- "FIT" --> K["Learn fallback statistics"]
+    J -- "TRANSFORM" --> L["Reuse saved fallback statistics"]
+    K --> M["Fill remaining numeric gaps"]
+    L --> M
+    M --> N["Fill missing categories with Unknown"]
+    N --> O{"TRANSFORM?"}
+    O -- "Yes" --> P["Map unseen categories to Unknown"]
+    O -- "No: FIT" --> Q["Keep fitted categories"]
+    P --> R["Fill missing dates; derive month and weekday"]
+    Q --> R
+    R --> S["Flag rule violations and per-item IQR outliers"]
+    S --> T["Drop invalid rows<br/>optionally drop IQR outliers"]
+    T --> U{"FIT or TRANSFORM?"}
+    U -- "FIT" --> V["Learn scaler statistics and category lists"]
+    U -- "TRANSFORM" --> W["Reuse saved scaler statistics and category lists"]
+    V --> X["Scale numeric fields and one-hot encode categories"]
+    W --> X
+
+    T --> Y["Readable cleaned CSV<br/>cleaned/cleaned_[name].csv"]
+    X --> Z["Model-ready feature matrix<br/>model_ready/model_ready_[name].csv"]
+    Y --> AA["Save artifacts and cleaning report<br/>src/artifacts.json<br/>src/cleaning_report.json"]
+    Z --> AA
+```
+
 ## How the pipeline cleans
 
 **Routine steps**

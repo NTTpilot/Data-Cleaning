@@ -33,9 +33,9 @@ import pandas as pd
 log = logging.getLogger("cafe_cleaner")
 
 
-# --------------------------------------------------------------------------- #
+# --------------------------------- #
 # Config
-# --------------------------------------------------------------------------- #
+# --------------------------------- #
 @dataclass
 class Config:
     sentinels: tuple = ("ERROR", "UNKNOWN", "N/A", "NA", "NAN", "NULL", "NONE", "")
@@ -54,9 +54,9 @@ class Config:
     scaling: str = "standard"            # "standard" (z-score) or "minmax"
 
 
-# --------------------------------------------------------------------------- #
-# 1. Load + missing/corrupted value standardisation
-# --------------------------------------------------------------------------- #
+# --------------------------------- #
+# 1. load + missing/corrupted value standardisation
+# --------------------------------- #
 def to_snake(name: str) -> str:
     return re.sub(r"\W+", "_", name.strip().lower()).strip("_")
 
@@ -77,9 +77,9 @@ def standardize_missing(df: pd.DataFrame, cfg: Config) -> pd.DataFrame:
     return df
 
 
-# --------------------------------------------------------------------------- #
+# --------------------------------- #
 # 2. Type casting + string normalisation
-# --------------------------------------------------------------------------- #
+# --------------------------------- #
 def cast_types(df: pd.DataFrame, cfg: Config) -> pd.DataFrame:
     df = df.copy()
     df[cfg.id_col] = df[cfg.id_col].str.upper()
@@ -96,9 +96,9 @@ def cast_types(df: pd.DataFrame, cfg: Config) -> pd.DataFrame:
     return df
 
 
-# --------------------------------------------------------------------------- #
+# --------------------------------- #
 # 3. Duplicates
-# --------------------------------------------------------------------------- #
+# --------------------------------- #
 def drop_duplicates(df: pd.DataFrame, cfg: Config) -> pd.DataFrame:
     """Drop rows with no valid ID, exact duplicates, then duplicate IDs
     (keeping the most complete record per ID)."""
@@ -114,9 +114,9 @@ def drop_duplicates(df: pd.DataFrame, cfg: Config) -> pd.DataFrame:
     return df
 
 
-# --------------------------------------------------------------------------- #
+# --------------------------------- #
 # 4. Imputation (relationship based first, distribution-based fallback)
-# --------------------------------------------------------------------------- #
+# --------------------------------- #
 def learn_price_map(df: pd.DataFrame, cfg: Config) -> dict[str, float]:
     """item -> unit price, only for items whose price is (near) constant."""
     valid = df.dropna(subset=["item", "price_per_unit"])
